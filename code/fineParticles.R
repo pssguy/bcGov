@@ -113,17 +113,40 @@ observe({
       siteName <- site$site[1]
       
       site %>% 
-        group_by(month,year) %>% 
+       # group_by(month,year) %>% 
         # summarize(avVal=round(mean(value,na.rm=T),1)) %>% 
         group_by(year) %>% 
         plot_ly(x=month,y=avVal,mode="lines+markers",color=as.factor(year),
                 hoverinfo = "text",
                 text = paste0(month,", ",year,"<br>Value:",avVal)) %>%
         layout(hovermode = "closest",
+               title=paste0("Status of Fine Particulate Matter in B.C - ",siteName),
                xaxis=list(title=" "),
                yaxis=list(title="Average Value")
         )
   })
+    
+    output$fp_hours <- renderPlotly({
+      
+      site <- fp_df_hour %>%
+        filter(ems_id==click$id) 
+      
+      print(glimpse(site))
+      siteName <- site$site[1]
+      
+      site %>% 
+        # group_by(hour,year) %>% 
+        # summarize(avVal=round(mean(value,na.rm=T),1)) %>% 
+        group_by(year) %>% 
+        plot_ly(x=hour,y=avVal,mode="lines+markers",color=as.factor(year),
+                hoverinfo = "text",
+                text = paste0(hour,", ",year,"<br>Value:",avVal)) %>%
+        layout(hovermode = "closest",
+               title=paste0("Status of Fine Particulate Matter in B.C - ",siteName),
+               xaxis=list(title="24-hour Time"),
+               yaxis=list(title="Average Value")
+        )
+    })
   
   
 })

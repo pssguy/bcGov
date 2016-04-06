@@ -34,6 +34,11 @@ dashboardPage(skin="yellow",
       fluidRow(
         column(
           width = 6,
+          box( width=12,
+               # status = "info", solidHeader = TRUE,
+               # title = "Map - click on Circle for Info and Charts",
+               includeMarkdown("about/fineParticles.md")
+          ),    
       box( width=12,
           status = "success", solidHeader = TRUE,
           title = "Map - click on Circle for Info and Charts",
@@ -50,7 +55,7 @@ dashboardPage(skin="yellow",
       box(width=12,
           status = "success", solidHeader = TRUE,
           collapsible = T,collapsed = T,
-          title = "Days Exceeding Standards",
+          title = "% Days Exceeding Standards",
           plotlyOutput("fp_days")
         
       ),
@@ -59,6 +64,13 @@ dashboardPage(skin="yellow",
           collapsible = T,collapsed = T,
           title = "Monthly Variation",
           plotlyOutput("fp_months")
+          
+      ),
+      box(width=12,
+          status = "success", solidHeader = TRUE,
+          collapsible = T,collapsed = T,
+          title = "Hourly Variation",
+          plotlyOutput("fp_hours")
           
       )
     )

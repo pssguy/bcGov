@@ -30,18 +30,22 @@ dashboardPage(skin="yellow",
   dashboardBody(tabItems(
     tabItem(
       "fineparticles",
-      
-      
-      box(width=5,
-        status = "success", solidHeader = TRUE,
-         title = "Daily Averages Fine Particular Matter - Hover Points/Bars for details"
-        # textOutput("player"),
-       #  plotlyOutput("threePtCum")
+      box(
+          status = "success", solidHeader = TRUE,
+          title = "Map - click on Circle for Info and Charts",
+          leafletOutput("sitesMap"),
+          verbatimTextOutput("Click_text")
       ),
-      box(width=7,
+      
+      box(
+        status = "success", solidHeader = TRUE,
+         title = "Daily Averages Fine Particular Matter - Hover Points/Bars for details",
+         plotlyOutput("fp_ts")
+      ),
+      box(
           status = "success", solidHeader = TRUE,
           title = "Days Exceeding Standards"
-         # DT::dataTableOutput("gameLogs")
+        
       )
     )
 

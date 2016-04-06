@@ -103,7 +103,26 @@ observe({
              yaxis=list(title="% days exceeding 24hr av of 28 µg/ cubic metre")
              
       )
-    
+  })  
+    output$fp_months <- renderPlotly({
+      
+      site <- fp_df_month %>%
+        filter(ems_id==click$id) 
+      
+      print(glimpse(site))
+      siteName <- site$site[1]
+      
+      site %>% 
+        group_by(month,year) %>% 
+        # summarize(avVal=round(mean(value,na.rm=T),1)) %>% 
+        group_by(year) %>% 
+        plot_ly(x=month,y=avVal,mode="lines+markers",color=as.factor(year),
+                hoverinfo = "text",
+                text = paste0(month,", ",year,"<br>Value:",avVal)) %>%
+        layout(hovermode = "closest",
+               xaxis=list(title=" "),
+               yaxis=list(title="Average Value")
+        )
   })
   
   

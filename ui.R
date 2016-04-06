@@ -53,6 +53,13 @@ dashboardPage(skin="yellow",
           title = "Days Exceeding Standards",
           plotlyOutput("fp_days")
         
+      ),
+      box(width=12,
+          status = "success", solidHeader = TRUE,
+          collapsible = T,collapsed = T,
+          title = "Monthly Variation",
+          plotlyOutput("fp_months")
+          
       )
     )
       )

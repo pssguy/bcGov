@@ -28,24 +28,33 @@ dashboardPage(skin="yellow",
   ),
   
   dashboardBody(tabItems(
+    
     tabItem(
       "fineparticles",
-      box(
+      fluidRow(
+        column(
+          width = 6,
+      box( width=12,
           status = "success", solidHeader = TRUE,
           title = "Map - click on Circle for Info and Charts",
-          leafletOutput("sitesMap"),
-          verbatimTextOutput("Click_text")
-      ),
-      
-      box(
+          leafletOutput("sitesMap")
+      )),
+      column(
+        width = 6,
+      box(width=12,
         status = "success", solidHeader = TRUE,
-         title = "Daily Averages Fine Particular Matter - Hover Points/Bars for details",
+        collapsible = T,collapsed = F,
+         title = "Daily Averages Fine Particular Matter - Zoom and Hover for details",
          plotlyOutput("fp_ts")
       ),
-      box(
+      box(width=12,
           status = "success", solidHeader = TRUE,
-          title = "Days Exceeding Standards"
+          collapsible = T,collapsed = T,
+          title = "Days Exceeding Standards",
+          plotlyOutput("fp_days")
         
+      )
+    )
       )
     )
 

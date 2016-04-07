@@ -1,14 +1,14 @@
 
 # map 
-output$fp_sitesMap <- renderLeaflet({
+output$ozone_sitesMap <- renderLeaflet({
   
-  popup <- paste0(fp_sites$name, "<br>", "Av Rate 2011-2013: ", fp_sites$value)
+  popup <- paste0(ozone_sites$name, "<br>", "Av Rate 2011-2013: ", ozone_sites$value)
   pal <- colorNumeric(
     palette = "Reds",
-    domain = fp_sites$value
+    domain = ozone_sites$value
   )
   
-  map <-fp_sites %>% 
+  map <-ozone_sites %>% 
     leaflet()  %>% 
     addTiles() %>% 
     #addProviderTiles("MapQuestOpen.Aerial") %>%
@@ -26,15 +26,15 @@ output$fp_sitesMap <- renderLeaflet({
 
 
 observe({
-  click<-input$fp_sitesMap_marker_click
+  click<-input$ozone_sitesMap_marker_click
   if(is.null(click))
     return()
   
   print(Sys.time())
   
-  output$fp_ts <- renderPlotly({
+  output$ozone_ts <- renderPlotly({
     
-   site <- fp_df_date %>%
+   site <- ozone_df_date %>%
       filter(ems_id==click$id) 
  
    meanValue <- round(mean(site$avVal,na.rm=T),1)
@@ -49,29 +49,27 @@ observe({
              text = paste(date,"<br>Value:",avVal))  %>%
      
      
-     add_trace(y = c(10, 10), x= c(min(date), max(date)),
+     add_trace(y = c(63, 63), x= c(min(date), max(date)),
                mode = "lines", line = list(color = "blue",width=1,dash="10px"),
-               name="Annual <br> Standard") %>%
-     add_trace(y = c(28, 28), x= c(min(date), max(date)),
-               mode = "lines", line = list(color = "green",width=1,dash="10px"),
-               name="Daily <br> Standard") %>%
+               name="Standard") %>%
+    
      
      add_trace(y = c(meanValue, meanValue), x= c(min(date), max(date)),
                mode = "lines", line = list(color = "red",width=2),
                name="Average") %>%
      
      layout(hovermode = "closest",
-            title=paste0("Status of Fine Particulate Matter in B.C - ",siteName),
+            title=paste0("Ground-level ozone in B.C - ",siteName),
             xaxis=list(title=" "),
-            yaxis=list(title="Daily Average PM2.5<br>(micrograms per cubic meter)")
+            yaxis=list(title="Daily Average 63 parts per billion.")
      )
 
   })
   
   
-  output$fp_days <- renderPlotly({
+  output$ozone_days <- renderPlotly({
     
-    site <- fp_df_date %>%
+    site <- ozone_df_date %>%
       filter(ems_id==click$id) 
     
    print(glimpse(site))
@@ -90,7 +88,7 @@ observe({
       group_by(date,year) %>% 
      # filter(value>-1&year>2008) %>% # exclude partial data
      # summarize(avVal=round(mean(value,na.rm=T),1)) %>% 
-      filter(avVal>=28) %>% 
+      filter(avVal>=63) %>% 
       group_by(year) %>% 
       tally() %>% 
       rename(bad=n) %>% 
@@ -98,15 +96,15 @@ observe({
       mutate(bad=ifelse(is.na(bad),0,bad),pc=round(100*bad/all,1)) %>% 
       plot_ly(x=year,y=pc,type="bar",marker = list(color = toRGB("red")))  %>%
       layout(hovermode = "closest",
-             title=paste0("Status of Fine Particulate Matter in B.C - ",siteName),
+             title=paste0("Ground-level ozone in B.C - ",siteName),
              xaxis=list(title=" "),
-             yaxis=list(title="% days exceeding 24hr av of 28 µg/ cubic metre")
+             yaxis=list(title="% days exceeding 24hr av of 63 parts per billion")
              
       )
   })  
-    output$fp_months <- renderPlotly({
+    output$ozone_months <- renderPlotly({
       
-      site <- fp_df_month %>%
+      site <- ozone_df_month %>%
         filter(ems_id==click$id) 
       
       print(glimpse(site))
@@ -120,15 +118,15 @@ observe({
                 hoverinfo = "text",
                 text = paste0(month,", ",year,"<br>Value:",avVal)) %>%
         layout(hovermode = "closest",
-               title=paste0("Status of Fine Particulate Matter in B.C - ",siteName),
+               title=paste0("Ground-level ozone in B.C - ",siteName),
                xaxis=list(title=" "),
                yaxis=list(title="Average Value")
         )
   })
     
-    output$fp_hours <- renderPlotly({
+    output$ozone_hours <- renderPlotly({
       
-      site <- fp_df_hour %>%
+      site <- ozone_df_hour %>%
         filter(ems_id==click$id) 
       
       print(glimpse(site))
@@ -142,7 +140,7 @@ observe({
                 hoverinfo = "text",
                 text = paste0(hour,", ",year,"<br>Value:",avVal)) %>%
         layout(hovermode = "closest",
-               title=paste0("Status of Fine Particulate Matter in B.C - ",siteName),
+               title=paste0("Ground-level ozone in B.C - ",siteName),
                xaxis=list(title="24-hour Time"),
                yaxis=list(title="Average Value")
         )

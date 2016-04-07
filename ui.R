@@ -9,8 +9,10 @@ dashboardPage(skin="yellow",
     
     sidebarMenu(id = "sbMenu",
       
-      menuItem("Environmental",
-               menuSubItem("Fine Particles", tabName = "fineparticles", selected=T)
+      menuItem("Air Quality",
+               
+               menuSubItem("Fine Particles", tabName = "fineparticles"),
+               menuSubItem("Ozone", tabName = "ozone", selected=T)
       ),
       
       
@@ -42,7 +44,7 @@ dashboardPage(skin="yellow",
       box( width=12,
           status = "success", solidHeader = TRUE,
           title = "Map - click on Circle for Info and Charts",
-          leafletOutput("sitesMap")
+          leafletOutput("fp_sitesMap")
       )),
       column(
         width = 6,
@@ -75,7 +77,56 @@ dashboardPage(skin="yellow",
       )
     )
       )
+    ),
+    
+    tabItem(
+      "ozone",
+      fluidRow(
+        column(
+          width = 6,
+          box( width=12,
+               # status = "info", solidHeader = TRUE,
+               # title = "Map - click on Circle for Info and Charts",
+               includeMarkdown("about/ozone.md")
+          ),    
+          box( width=12,
+               status = "success", solidHeader = TRUE,
+               title = "Map - click on Circle for Info and Charts",
+               leafletOutput("ozone_sitesMap")
+          )),
+        column(
+          width = 6,
+          box(width=12,
+              status = "success", solidHeader = TRUE,
+              collapsible = T,collapsed = F,
+              title = "Daily Averages Fine Particular Matter - Zoom and Hover for details",
+              plotlyOutput("ozone_ts")
+          ),
+          box(width=12,
+              status = "success", solidHeader = TRUE,
+              collapsible = T,collapsed = T,
+              title = "% Days Exceeding Standards",
+              plotlyOutput("ozone_days")
+              
+          ),
+          box(width=12,
+              status = "success", solidHeader = TRUE,
+              collapsible = T,collapsed = T,
+              title = "Monthly Variation",
+              plotlyOutput("ozone_months")
+              
+          ),
+          box(width=12,
+              status = "success", solidHeader = TRUE,
+              collapsible = T,collapsed = T,
+              title = "Hourly Variation",
+              plotlyOutput("ozone_hours")
+              
+          )
+        )
+      )
     )
+    
 
 
     

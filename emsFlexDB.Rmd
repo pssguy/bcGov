@@ -12,6 +12,7 @@ library(flexdashboard)
 library(rems)
 library(plotly)
 library(feather)
+library(stringr)
 library(dplyr)
 
 
@@ -24,7 +25,7 @@ data <- read_feather("data/ems_20160817.feather")
 
 
 
-Column {data-width=650}
+Column {data-width=300}
 -----------------------------------------------------------------------
 
 
@@ -55,8 +56,10 @@ data %>%
 
 ```
 
+There are often highly skewed results which suggests either erroneous entry data and/or occasional
+serious incidents
 
-Column {data-width=350}
+Column {data-width=700}
 -----------------------------------------------------------------------
 
 ### Change Over Time
@@ -65,10 +68,33 @@ Column {data-width=350}
 
 ## just get worst 12 offenders as measuerd
 
+ worst <- data %>% 
+    filter(PARAMETER_CODE=="0450") %>% 
+    group_by(MONITORING_LOCATION) %>% 
+    summarize(counts=n(), mean=mean(RESULT,na.rm=TRUE)) %>% 
+    ungroup() %>% 
+    arrange(desc(counts)) %>% 
+    head(12) %>% 
+    .$MONITORING_LOCATION
+
+## no
+data %>% 
+    filter(PARAMETER_CODE=="0450"&MONITORING_LOCATION %in% worst) %>% 
+    mutate(date = as.character(str_sub(COLLECTION_START,1,10))) %>% 
+    select(name=MONITORING_LOCATION,level=RESULT,date) %>% 
+    plot_ly(x=date,y=level,color=name, colors="Paired",mode="markers",
+            hoverinfo=text,
+            text=paste0(name,"<br>",date,"<br>", level)) %>% 
+   layout(hovermode = "closest",
+            title=paste0("Coliform - Fecal Records Jan 2015-Aug 2016 at sites with highest Av"),
+            xaxis=list(title=" "),
+            yaxis=list(title="CFU/100mL"))  %>% 
+   config(displayModeBar = F,showLink = F)
+     
 
 ```
 
-### Chart C
+### Physical location
 
 ```{r}
 

@@ -1,0 +1,76 @@
+---
+title: "BC Environmental Montoring"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+# packages required
+library(flexdashboard)
+library(rems)
+library(plotly)
+library(feather)
+library(dplyr)
+
+
+
+## read in data - users downloading all might have data size issues
+
+data <- read_feather("data/ems_20160817.feather")
+```
+
+
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+
+### Result Distribution (Pan and zoom as required)
+
+```{r}
+
+ data %>%
+    filter(PARAMETER_CODE=="0450") %>%
+    plot_ly(x=RESULT,type="histogram") %>% 
+    layout(title="Distribution of Coliform - Fecal Records Jan 2015-August 2016",
+           xaxis=list(title="CFU/100mL"),
+                      yaxis=list(title="Samples"))  %>% 
+   config(displayModeBar = F,showLink = F)
+
+```
+
+
+
+### Summary
+
+```{r}
+
+data %>%
+    filter(PARAMETER_CODE=="0450") %>%
+  select(RESULT) %>% 
+  summary()
+
+```
+
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Change Over Time
+
+```{r}
+
+## just get worst 12 offenders as measuerd
+
+
+```
+
+### Chart C
+
+```{r}
+
+```
+

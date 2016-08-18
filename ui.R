@@ -8,11 +8,12 @@ dashboardPage(skin="yellow",
    # uiOutput("a"),
     
     sidebarMenu(id = "sbMenu",
-      
+                includeMarkdown("about/environmental.md"),
       menuItem("Air Quality",
                
                menuSubItem("Fine Particles", tabName = "fineparticles"),
                menuSubItem("Ozone", tabName = "ozone", selected=T)
+               
       ),
       
       

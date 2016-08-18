@@ -8,13 +8,13 @@ library(plotly)
 library(leaflet)
 
 
-# fine paticular data - possibly acceptable with one file but not many still 26 - so reduced to summary files - could also do for those only in summary table?
+# fine paticular data - possibly acceptable with one file but not many still 26 - so reduced to summary files - could #also do for those only in summary table?
 
 fp_df_date <- readRDS("data/fp_df_date.rds")
 fp_df_hour <- readRDS("data/fp_df_hour.rds")
 fp_df_month <- readRDS("data/fp_df_month.rds")
 fp_sites <- read_csv("data/pm25sitesummary.csv")
-ozone_sites <- read_csv("data/ozonesitesummary.csv") # prob do not need to amend as just one reading
+ozone_sites <- read_csv("data/ozonesitesummary.csv") 
 
 
 # should do when initially creating

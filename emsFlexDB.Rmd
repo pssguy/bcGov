@@ -4,6 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
+runtime: shiny    
 ---
 
 ```{r setup, include=FALSE}
@@ -13,16 +14,30 @@ library(rems)
 library(plotly)
 library(feather)
 library(stringr)
+library(leaflet)
 library(dplyr)
 
 
 
 ## read in data - users downloading all might have data size issues
 
-data <- read_feather("data/ems_20160817.feather")
+ems <- read_feather("data/ems_20160817.feather")
+library(readr)
+test <- ems %>%
+    filter(PARAMETER_CODE=="0450")
+write_csv(test,"problem.csv")
 ```
 
+```{r munging}
 
+data <- reactive({
+  
+  ems %>%
+    filter(PARAMETER_CODE=="0450")
+  
+})
+
+```
 
 
 Column {data-width=300}
@@ -33,13 +48,18 @@ Column {data-width=300}
 
 ```{r}
 
- data %>%
-    filter(PARAMETER_CODE=="0450") %>%
+output$hist <- renderPlotly({
+ data() %>%
+    #filter(PARAMETER_CODE=="0450") %>%
     plot_ly(x=RESULT,type="histogram") %>% 
     layout(title="Distribution of Coliform - Fecal Records Jan 2015-August 2016",
            xaxis=list(title="CFU/100mL"),
                       yaxis=list(title="Samples"))  %>% 
    config(displayModeBar = F,showLink = F)
+  
+})
+
+plotlyOutput("hist")
 
 ```
 
@@ -48,11 +68,11 @@ Column {data-width=300}
 ### Summary
 
 ```{r}
-
-data %>%
-    filter(PARAMETER_CODE=="0450") %>%
-  select(RESULT) %>% 
-  summary()
+# 
+# data() %>%
+#     #filter(PARAMETER_CODE=="0450") %>%
+#   select(RESULT) %>% 
+#   summary()
 
 ```
 
@@ -68,8 +88,21 @@ Column {data-width=700}
 
 ## just get worst 12 offenders as measuerd
 
- worst <- data %>% 
-    filter(PARAMETER_CODE=="0450") %>% 
+ # worst <- data()
+ #    group_by(MONITORING_LOCATION) %>% 
+ #    summarize(counts=n(), mean=mean(RESULT,na.rm=TRUE)) %>% 
+ #    ungroup() %>% 
+ #    arrange(desc(counts)) %>% 
+ #    head(12) %>% 
+ #    .$MONITORING_LOCATION
+
+## no
+
+output$timeChart <- renderPlotly({
+  
+  print(names(data()))
+  
+   worst <- data() %>% 
     group_by(MONITORING_LOCATION) %>% 
     summarize(counts=n(), mean=mean(RESULT,na.rm=TRUE)) %>% 
     ungroup() %>% 
@@ -77,26 +110,45 @@ Column {data-width=700}
     head(12) %>% 
     .$MONITORING_LOCATION
 
-## no
-data %>% 
-    filter(PARAMETER_CODE=="0450"&MONITORING_LOCATION %in% worst) %>% 
+  key <- row.names(data())
+  print(key[1:2])
+  
+data() %>% 
+    filter(MONITORING_LOCATION %in% worst) %>% 
     mutate(date = as.character(str_sub(COLLECTION_START,1,10))) %>% 
     select(name=MONITORING_LOCATION,level=RESULT,date) %>% 
-    plot_ly(x=date,y=level,color=name, colors="Paired",mode="markers",
+    plot_ly(x=date,y=level,color=name, colors="Paired",mode="markers",key = key,source="A",
             hoverinfo=text,
             text=paste0(name,"<br>",date,"<br>", level)) %>% 
    layout(hovermode = "closest",
             title=paste0("Coliform - Fecal Records Jan 2015-Aug 2016 at sites with highest Av"),
             xaxis=list(title=" "),
-            yaxis=list(title="CFU/100mL"))  %>% 
-   config(displayModeBar = F,showLink = F)
+            yaxis=list(title="CFU/100mL"))  #%>% 
+   #config(displayModeBar = F,showLink = F)
      
+})
 
+plotlyOutput("timeChart")
 ```
 
 ### Physical location
 
 ```{r}
+
+## map points based on time chart
+
+output$map <- renderLeaflet({
+  
+  print("enter ")
+  print(event_data("plotly_clicked", source="A"))
+  print("no click picked up ")
+  #locations %>% 
+    leaflet() %>% 
+    addTiles() 
+  
+})
+
+leafletOutput("map")
 
 ```
 
